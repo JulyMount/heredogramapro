@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heredograma Pro</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-dna"></i> Heredograma Pro</h2>
+            <button class="icon-btn" onclick="toggleTheme()" title="Alternar Modo Escuro"><i class="fas fa-moon"></i></button>
+        </div>
+        
+        <div class="sidebar-card">
+            <div class="section-title">1. Adicionar Indivíduos</div>
+            <button class="btn" onclick="addNode('male')"><i class="fas fa-square"></i> Homem</button>
+            <button class="btn" onclick="addNode('female')"><i class="fas fa-circle"></i> Mulher</button>
+            <button class="btn" onclick="addNode('unknown')"><i class="fas fa-diamond"></i> Indefinido</button>
+        </div>
+        
+        <div class="sidebar-card">
+            <div class="section-title">2. Vínculos</div>
+            <button class="btn" id="btn-marriage" onclick="setMode('marriage')">
+                <i class="fas fa-ring"></i> Criar Casamento<br><small>(Clique nos 2 cônjuges)</small>
+            </button>
+            <button class="btn" id="btn-child" onclick="setMode('child')">
+                <i class="fas fa-sitemap"></i> Adicionar Filho<br><small>(Clique no Pai, Mãe e Filho)</small>
+            </button>
+        </div>
+        
+        <div class="sidebar-card">
+            <div class="section-title">3. Edição do Selecionado</div>
+            <button class="btn" onclick="toggleProperty('affected')"><i class="fas fa-fill-drip"></i> Preencher (Afetado)</button>
+            <button class="btn" onclick="toggleProperty('deceased')"><i class="fas fa-slash"></i> Traço (Morto)</button>
+            <button class="btn" id="btn-genetics" onclick="setMode('genetics')">
+                <i class="fas fa-microscope"></i> Editar Genética<br><small>(Modo: Clique num indivíduo)</small>
+            </button>
+            <button class="btn btn-outline-danger" onclick="deleteSelected()"><i class="fas fa-trash"></i> Excluir Selecionado</button>
+        </div>
+
+        <div class="sidebar-actions">
+            <button class="btn btn-success" onclick="exportToPDF()"><i class="fas fa-print"></i> Salvar PDF</button>
+            <button class="btn btn-danger" onclick="clearWorkspace()"><i class="fas fa-eraser"></i> Limpar Tudo</button>
+        </div>
+    </div>
+
+    <div id="main">
+        <div id="mode-indicator" class="mode-pill"><i class="fas fa-mouse-pointer"></i> Modo: Livre</div>
+
+        <div id="workspace">
+            <svg id="svg-layer"></svg>
+            
+            <div id="genetics-popup" class="hidden glass-panel">
+                <div class="popup-header">
+                    <h4><i class="fas fa-edit"></i> Dados do Indivíduo</h4>
+                    <button class="close-btn" onclick="closeGenetics()"><i class="fas fa-times"></i></button>
+                </div>
+                
+                <div class="form-group">
+                    <label>Nome:</label>
+                    <input type="text" id="name-input" placeholder="Ex: João">
+                    <label class="cb-label"><input type="checkbox" id="name-cb"> Visível no heredograma</label>
+                </div>
+
+                <div class="form-group">
+                    <label>Descrição (Sintomas, etc):</label>
+                    <textarea id="desc-input" placeholder="Ex: Hipertensão..."></textarea>
+                    <label class="cb-label"><input type="checkbox" id="desc-cb"> Visível ao lado</label>
+                </div>
+
+                <h4><i class="fas fa-dna"></i> Autossômica (Cima)</h4>
+                <div class="form-group">
+                    <div class="input-row">
+                        <select id="auto-type-select">
+                            <option value="rec">Recessivo (aa)</option>
+                            <option value="dom">Dominante (A_)</option>
+                            <option value="codom">Codominância</option>
+                        </select>
+                        <button class="btn-circle btn-add" onclick="addAutosomalField()" title="Adicionar"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <div id="auto-traits-container"></div>
+                </div>
+                
+                <h4 id="sex-title"><i class="fas fa-venus-mars"></i> Sexual (Baixo)</h4>
+                <div class="form-group" id="sex-section">
+                    <div class="input-row" style="margin-bottom: 8px;">
+                        <button class="btn-sm btn-blue" onclick="addSexChromosomeField('X')">+ Adicionar X</button>
+                        <button class="btn-sm btn-purple" onclick="addSexChromosomeField('Y')">+ Adicionar Y</button>
+                    </div>
+                    <div id="sex-genes-container"></div>
+                </div>
+
+                <label class="cb-label" id="sex-cb-label" style="display: none; margin-top: 10px;">
+                    <input type="checkbox" id="sex-cb"> Forçar exibição (XY / XX)
+                </label>
+                
+                <div class="popup-actions">
+                    <button class="btn-popup btn-save" onclick="saveGenetics()"><i class="fas fa-check"></i> Salvar</button>
+                </div>
+            </div>
+            
+        </div>
+        
+        <div id="confirm-modal" class="hidden modal-overlay">
+            <div class="glass-panel" style="position: relative; right: 0; top: 0; transform: none; animation: popInCenter 0.3s; width: 350px;">
+                <div class="popup-header">
+                    <h4><i class="fas fa-exclamation-triangle" style="color: var(--danger);"></i> Apagar Tudo</h4>
+                </div>
+                <p style="margin-bottom: 20px; font-size: 14px; color: var(--text-muted); line-height: 1.5;">Tem certeza que deseja apagar todo o heredograma? Esta ação não pode ser desfeita.</p>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-popup" style="flex: 1; background: var(--bg-color); color: var(--text-main); border: 1px solid var(--grid-color);" onclick="closeConfirmModal()">Cancelar</button>
+                    <button class="btn-popup btn-danger" style="flex: 1; justify-content: center;" onclick="executeClearWorkspace()">Sim, Apagar</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="toast-container"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
