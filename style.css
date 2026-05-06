@@ -200,3 +200,51 @@ textarea { resize: vertical; min-height: 50px; }
     0% { opacity: 0; transform: scale(0.9); } 
     100% { opacity: 1; transform: scale(1); } 
 }
+
+/* --- RESPONSIVIDADE PARA CELULARES --- */
+@media (max-width: 768px) {
+    /* Muda o layout principal de lado a lado para empilhado (coluna) */
+    body {
+        flex-direction: column;
+    }
+
+    /* O menu lateral vira uma barra superior rolável */
+    #sidebar {
+        width: 100%;
+        height: auto;
+        padding: 10px;
+        display: flex;
+        overflow-x: auto; /* Permite rolar os botões para o lado */
+        white-space: nowrap;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        z-index: 10;
+    }
+
+    .sidebar-card {
+        display: inline-block;
+        min-width: 250px;
+        margin-right: 10px;
+        margin-bottom: 0;
+        flex-shrink: 0; /* Impede que os botões espremam */
+    }
+
+    /* A área de desenho ocupa o resto da tela */
+    #workspace {
+        width: 100%;
+        flex-grow: 1;
+        height: calc(100vh - 120px);
+    }
+
+    /* Ajusta o pop-up de edição para caber na tela do celular */
+    .glass-panel {
+        width: 90%;
+        right: 5%;
+        left: 5%;
+        top: 10%;
+        transform: none;
+        max-height: 80vh;
+        overflow-y: auto; /* Permite rolar se tiver muitas opções genéticas */
+        animation: popInCenter 0.3s;
+    }
+}

@@ -96,6 +96,7 @@ function addNode(type) {
     node.style.top = snap(80) + 'px';
     
     node.addEventListener('mousedown', startDrag);
+    node.addEventListener('touchstart', startDrag, {passive: false});
     node.addEventListener('click', (e) => handleNodeClick(e, id));
     
     workspace.appendChild(node);
@@ -319,33 +320,73 @@ function renderLabelsOnNode(id) {
     }
 }
 
-// --- Interações do Canvas (Drag & Drop, Conexões) ---
+// --- Interações do Canvas (Drag & Drop, Conexões - ATUALIZADO PARA TOUCH) ---
+
+// Função auxiliar para capturar a posição exata seja mouse ou dedo
+function getClientPos(e) {
+    if (e.touches && e.touches.length > 0) {
+        return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+    return { x: e.clientX, y: e.clientY };
+}
+
 function selectNode(id) {
     Object.values(nodes).forEach(n => n.element.classList.remove('selected'));
     selectedNodeId = id; if (id) document.getElementById(id).classList.add('selected');
 }
 
-workspace.addEventListener('mousedown', (e) => { 
-    if (e.target === workspace || e.target === svgLayer) { selectNode(null); closeGenetics(); } 
-});
+// Clicar fora para deselecionar (Mouse e Touch)
+workspace.addEventListener('mousedown', handleWorkspaceClick);
+workspace.addEventListener('touchstart', handleWorkspaceClick, {passive: false});
+
+function handleWorkspaceClick(e) {
+    if (e.target === workspace || e.target === svgLayer) { 
+        selectNode(null); closeGenetics(); 
+    }
+}
 
 function startDrag(e) {
     if (currentMode !== 'idle') return;
-    isDragging = true; dragTarget = e.target;
+    isDragging = true; 
+    dragTarget = e.currentTarget; // currentTarget garante que pegamos a div inteira do nó
+    
+    const pos = getClientPos(e);
     const rect = dragTarget.getBoundingClientRect();
-    dragOffsetX = e.clientX - rect.left; dragOffsetY = e.clientY - rect.top;
-    selectNode(dragTarget.id); closeGenetics(); 
+    dragOffsetX = pos.x - rect.left; 
+    dragOffsetY = pos.y - rect.top;
+    
+    selectNode(dragTarget.id); 
+    closeGenetics(); 
+    
+    if(e.type === 'touchstart') e.preventDefault(); // Evita scroll da tela ao arrastar
 }
 
-document.addEventListener('mousemove', (e) => {
-    if (!isDragging || !dragTarget) return;
-    const wsRect = workspace.getBoundingClientRect();
-    dragTarget.style.left = snap(e.clientX - wsRect.left - dragOffsetX) + 'px';
-    dragTarget.style.top = snap(e.clientY - wsRect.top - dragOffsetY) + 'px';
-    drawConnections();
-});
+// Eventos de movimento (Mouse e Touch)
+document.addEventListener('mousemove', handleMove);
+document.addEventListener('touchmove', handleMove, {passive: false});
 
-document.addEventListener('mouseup', () => { isDragging = false; dragTarget = null; });
+function handleMove(e) {
+    if (!isDragging || !dragTarget) return;
+    
+    // Evita que a tela do celular role enquanto arrasta a bolinha/quadrado
+    if(e.type === 'touchmove') e.preventDefault(); 
+
+    const pos = getClientPos(e);
+    const wsRect = workspace.getBoundingClientRect();
+    
+    dragTarget.style.left = snap(pos.x - wsRect.left - dragOffsetX) + 'px';
+    dragTarget.style.top = snap(pos.y - wsRect.top - dragOffsetY) + 'px';
+    drawConnections();
+}
+
+// Eventos de soltar (Mouse e Touch)
+document.addEventListener('mouseup', endDrag);
+document.addEventListener('touchend', endDrag);
+
+function endDrag() { 
+    isDragging = false; 
+    dragTarget = null; 
+}
 
 function drawConnections() {
     svgLayer.innerHTML = ''; 
