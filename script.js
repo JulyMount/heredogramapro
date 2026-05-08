@@ -559,3 +559,30 @@ function exportToPDF() {
         showToast('PDF Salvo com sucesso!', 'success');
     });
 }
+
+function toggleFAB() {
+    const container = document.getElementById('fab-container');
+    const workspace = document.getElementById('workspace');
+    
+    container.classList.toggle('active');
+    
+    // Aplica ou remove o blur no workspace
+    if (container.classList.contains('active')) {
+        workspace.classList.add('workspace-blur');
+    } else {
+        workspace.classList.remove('workspace-blur');
+    }
+}
+
+function toggleTopDrawer() {
+    const drawer = document.getElementById('top-drawer');
+    drawer.classList.toggle('hidden');
+    // Adiciona uma animação simples de slide se desejar
+}
+
+// Fechar menus ao clicar no workspace
+workspace.addEventListener('click', () => {
+    document.getElementById('fab-container').classList.remove('active');
+    document.getElementById('workspace').classList.remove('workspace-blur');
+    document.getElementById('top-drawer').classList.add('hidden');
+});

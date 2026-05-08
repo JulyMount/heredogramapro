@@ -13,44 +13,82 @@
 </head>
 <body>
 
-    <div id="sidebar">
-        <div class="sidebar-header">
-            <h2><i class="fas fa-dna"></i> Heredograma Pro</h2>
-            <button class="icon-btn" onclick="toggleTheme()" title="Alternar Modo Escuro"><i class="fas fa-moon"></i></button>
-        </div>
-        
-        <div class="sidebar-card">
-            <div class="section-title">1. Adicionar Indivíduos</div>
-            <button class="btn" onclick="addNode('male')"><i class="fas fa-square"></i> Homem</button>
-            <button class="btn" onclick="addNode('female')"><i class="fas fa-circle"></i> Mulher</button>
-            <button class="btn" onclick="addNode('unknown')"><i class="fas fa-diamond"></i> Indefinido</button>
-        </div>
-        
-        <div class="sidebar-card">
-            <div class="section-title">2. Vínculos</div>
-            <button class="btn" id="btn-marriage" onclick="setMode('marriage')">
-                <i class="fas fa-ring"></i> Criar Casamento<br><small>(Clique nos 2 cônjuges)</small>
-            </button>
-            <button class="btn" id="btn-child" onclick="setMode('child')">
-                <i class="fas fa-sitemap"></i> Adicionar Filho<br><small>(Clique no Pai, Mãe e Filho)</small>
-            </button>
-        </div>
-        
-        <div class="sidebar-card">
-            <div class="section-title">3. Edição do Selecionado</div>
-            <button class="btn" onclick="toggleProperty('affected')"><i class="fas fa-fill-drip"></i> Preencher (Afetado)</button>
-            <button class="btn" onclick="toggleProperty('deceased')"><i class="fas fa-slash"></i> Traço (Morto)</button>
-            <button class="btn" id="btn-genetics" onclick="setMode('genetics')">
-                <i class="fas fa-microscope"></i> Editar Genética<br><small>(Modo: Clique num indivíduo)</small>
-            </button>
-            <button class="btn btn-outline-danger" onclick="deleteSelected()"><i class="fas fa-trash"></i> Excluir Selecionado</button>
-        </div>
-
-        <div class="sidebar-actions">
-            <button class="btn btn-success" onclick="exportToPDF()"><i class="fas fa-print"></i> Salvar PDF</button>
-            <button class="btn btn-danger" onclick="clearWorkspace()"><i class="fas fa-eraser"></i> Limpar Tudo</button>
-        </div>
+<header class="mobile-header">
+    <div class="logo">
+        <i class="fas fa-dna"></i> <span>Heredograma Pro</span>
     </div>
+    <div class="header-right">
+        <div id="top-drawer" class="top-drawer hidden">
+            <button class="icon-btn" onclick="toggleTheme()" title="Modo Escuro">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="icon-btn" onclick="exportToPDF()" title="Salvar PDF">
+                <i class="fas fa-file-pdf"></i>
+            </button>
+            <button class="icon-btn btn-danger-text" onclick="clearWorkspace()" title="Limpar Tudo">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+        <button class="icon-btn menu-trigger" onclick="toggleTopDrawer()">
+            <i class="fas fa-ellipsis-v"></i>
+        </button>
+    </div>
+</header>
+
+<div class="fab-container" id="fab-container">
+    <div class="fab-options">
+        <button class="fab-item" onclick="addNode('male'); toggleFAB();" title="Adicionar Homem">
+            <i class="fas fa-square"></i>
+        </button>
+        <button class="fab-item" onclick="addNode('female'); toggleFAB();" title="Adicionar Mulher">
+            <i class="fas fa-circle"></i>
+        </button>
+        <button class="fab-item" onclick="addNode('unknown'); toggleFAB();" title="Indefinido">
+            <i class="fas fa-square" style="transform: rotate(45deg); font-size: 0.8em;"></i>
+        </button>
+    </div>
+    <button class="fab-main" onclick="toggleFAB()" id="fab-main">
+        <i class="fas fa-dna"></i>
+    </button>
+</div>
+
+<div id="sidebar" class="hide-mobile">
+    <div class="sidebar-header">
+        <h2><i class="fas fa-dna"></i> Heredograma Pro</h2>
+        <button class="icon-btn" onclick="toggleTheme()" title="Alternar Modo Escuro"><i class="fas fa-moon"></i></button>
+    </div>
+    
+    <div class="sidebar-card">
+        <div class="section-title">1. Adicionar Indivíduos</div>
+        <button class="btn" onclick="addNode('male')"><i class="fas fa-square"></i> Homem</button>
+        <button class="btn" onclick="addNode('female')"><i class="fas fa-circle"></i> Mulher</button>
+        <button class="btn" onclick="addNode('unknown')">
+            <i class="fas fa-square" style="transform: rotate(45deg); display: inline-block; font-size: 0.8em; margin-right: 5px;"></i> 
+            Indefinido
+        </button>
+    </div>
+    
+    <div class="sidebar-card">
+        <div class="section-title">2. Vínculos</div>
+        <button class="btn" id="btn-marriage" onclick="setMode('marriage')"><i class="fas fa-ring"></i> Criar Casamento</button>
+        <button class="btn" id="btn-child" onclick="setMode('child')"><i class="fas fa-sitemap"></i> Adicionar Filho</button>
+    </div>
+
+    <div class="sidebar-card">
+        <div class="section-title">3. Edição do Selecionado</div>
+        <button class="btn" onclick="toggleProperty('affected')"><i class="fas fa-fill-drip"></i> Preencher (Afetado)</button>
+        <button class="btn" onclick="toggleProperty('deceased')"><i class="fas fa-slash"></i> Traço (Morto)</button>
+        <button class="btn" id="btn-genetics-desktop" onclick="setMode('genetics')">
+            <i class="fas fa-microscope"></i> Editar Genética
+        </button>
+        <button class="btn btn-outline-danger" onclick="deleteSelected()"><i class="fas fa-trash"></i> Excluir Selecionado</button>
+    </div>
+
+    <div class="sidebar-actions">
+        <button class="btn btn-success" onclick="exportToPDF()"><i class="fas fa-print"></i> Salvar PDF</button>
+        <button class="btn btn-danger" onclick="clearWorkspace()"><i class="fas fa-eraser"></i> Limpar Tudo</button>
+    </div>
+</div>
 
     <div id="main">
         <div id="mode-indicator" class="mode-pill"><i class="fas fa-mouse-pointer"></i> Modo: Livre</div>
