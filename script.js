@@ -386,11 +386,41 @@ document.addEventListener('touchend', () => clearTimeout(longPressTimer));
 // 3. Funções de controle do menu
 function showContextMenu(x, y, id) {
     contextNodeId = id;
-    contextMenu.style.left = x + 'px';
-    contextMenu.style.top = (y - 50) + 'px'; // Aparece um pouco acima do dedo
     contextMenu.classList.remove('hidden');
     
-    // Feedback vibratório (opcional, funciona em Android)
+    const menuWidth = contextMenu.offsetWidth;
+    const menuHeight = contextMenu.offsetHeight;
+    
+    // Pegamos os limites reais do Workspace (a área cinza/quadriculada)
+    const wsRect = workspace.getBoundingClientRect();
+    const wsBottom = wsRect.bottom;
+    const wsRight = wsRect.right;
+
+    // --- AJUSTE X (Horizontal) ---
+    let finalX = x;
+    // Se o clique + largura do menu ultrapassa a borda direita do workspace
+    if (x + menuWidth > wsRight) {
+        finalX = x - menuWidth - 5; 
+    }
+
+    // --- AJUSTE Y (Vertical) ---
+    // Tentativa inicial: abrir o menu um pouco acima do dedo
+    let finalY = y - 20; 
+
+    // A MÁGICA: Se o toque + altura do menu ultrapassa o CHÃO do workspace
+    if (y + menuHeight > wsBottom) {
+        // Joga o menu inteirinho para CIMA do ponto de toque
+        finalY = y - menuHeight + 5; 
+    }
+
+    // --- TRAVAS DE SEGURANÇA (Para não sumir no topo ou na esquerda) ---
+    if (finalY < wsRect.top) finalY = wsRect.top + 10;
+    if (finalX < wsRect.left) finalX = wsRect.left + 10;
+
+    // Aplica as posições corrigidas
+    contextMenu.style.left = finalX + 'px';
+    contextMenu.style.top = finalY + 'px';
+    
     if (navigator.vibrate) navigator.vibrate(50);
 }
 
@@ -402,19 +432,28 @@ function hideContextMenu() {
 function handleContextAction(action) {
     hideContextMenu();
     const id = contextNodeId;
+    if (!id) return;
 
-    if (action === 'genetics') {
+    // Garantimos que o nó clicado seja o selecionado para a função toggleProperty funcionar
+    selectNode(id); 
+
+    if (action === 'affected') {
+        // No seu CSS/HTML, a classe para preencher provavelmente é 'affected'
+        toggleProperty('affected'); 
+    } else if (action === 'deceased') {
+        // No seu CSS/HTML, a classe para o traço de morto provavelmente é 'deceased'
+        toggleProperty('deceased');
+    } else if (action === 'genetics') {
         targetNodeId = id;
         showGeneticsPopup(id);
     } else if (action === 'delete') {
-        selectedNodeId = id;
         deleteSelected();
     } else if (action === 'marriage') {
         setMode('marriage');
-        handleNodeClick({ stopPropagation: () => {} }, id); // Inicia o casamento com este nó
+        handleNodeClick({ stopPropagation: () => {} }, id);
     } else if (action === 'child') {
         setMode('child');
-        handleNodeClick({ stopPropagation: () => {} }, id); // Inicia a lógica de filho com este nó
+        handleNodeClick({ stopPropagation: () => {} }, id);
     }
 }
 

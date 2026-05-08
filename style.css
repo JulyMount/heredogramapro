@@ -255,13 +255,13 @@ textarea { resize: vertical; min-height: 50px; }
     backdrop-filter: blur(10px);
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    padding: 8px;
+    padding: 6px; /*Original sendo 8px*/
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 2px; /*Original sendo 5px*/
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     z-index: 1000;
-    width: 140px;
+    width: 150px; /*Original sendo 140px*/
 }
 
 .context-menu button {
