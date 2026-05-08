@@ -576,8 +576,17 @@ function toggleFAB() {
 
 function toggleTopDrawer() {
     const drawer = document.getElementById('top-drawer');
+    const trigger = document.querySelector('.menu-trigger i'); // Pegando o ícone interno
+    
     drawer.classList.toggle('hidden');
-    // Adiciona uma animação simples de slide se desejar
+    
+    // Rotação suave do ícone
+    if (!drawer.classList.contains('hidden')) {
+        trigger.style.transform = 'rotate(90deg)';
+        trigger.style.transition = 'transform 0.4s ease';
+    } else {
+        trigger.style.transform = 'rotate(0deg)';
+    }
 }
 
 // Fechar menus ao clicar no workspace
@@ -585,4 +594,6 @@ workspace.addEventListener('click', () => {
     document.getElementById('fab-container').classList.remove('active');
     document.getElementById('workspace').classList.remove('workspace-blur');
     document.getElementById('top-drawer').classList.add('hidden');
+    document.getElementById('top-drawer').classList.add('hidden');
+    document.querySelector('.menu-trigger').style.transform = 'rotate(0deg)';
 });

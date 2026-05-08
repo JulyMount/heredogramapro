@@ -231,16 +231,23 @@ textarea { resize: vertical; min-height: 50px; }
     /* 3. Ativa o novo Header Mobile */
     .mobile-header {
         display: flex !important;
-        justify-content: space-between;
+        justify-content: space-between; /* Empurra o logo pra esquerda e botões pra direita */
         align-items: center;
-        padding: 0 15px;
+        padding: 0 10px 0 20px; /* Menos padding na direita para encostar o ícone */
         height: 60px;
         background: var(--bg-card);
         border-bottom: 1px solid var(--border-color);
         position: fixed;
         top: 0;
+        left: 0;
         width: 100%;
         z-index: 1001;
+    }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 0; /* O gap agora é controlado pela gaveta */
     }
 
     /* 4. Ajusta o Workspace para começar abaixo do Header */
@@ -264,17 +271,53 @@ textarea { resize: vertical; min-height: 50px; }
 
     /* Estilo para a gaveta de cima (3 pontinhos) */
     .top-drawer {
-        display: flex;
-        gap: 10px;
-        background: var(--bg-color);
-        padding: 5px 10px;
-        border-radius: 20px;
+        display: flex !important;
+        align-items: center;
+        gap: 20px;
+        background: var(--bg-card);
+        padding: 8px 20px;
+        border-radius: 30px;
         border: 1px solid var(--border-color);
-        margin-right: 10px;
+        margin-right: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        
+        /* Transição Suave */
+        opacity: 1;
+        transform: scale(1) translateX(0);
+        transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transform-origin: right center;
     }
 
     .top-drawer.hidden {
-        display: none !important;
+        display: flex !important;
+        opacity: 0;
+        transform: scale(0.9) translateX(15px);
+        pointer-events: none;
+    }
+
+    /* Estilizando os ícones dentro da gaveta */
+    .top-drawer .icon-btn {
+        font-size: 1.1rem;
+        color: var(--text-main);
+        transition: transform 0.2s ease;
+    }
+
+    .top-drawer .icon-btn:active {
+        transform: scale(0.9);
+    }
+
+    /* Cor de destaque para o botão de apagar */
+    .btn-danger-text {
+        color: #ff4d4d !important;
+    }
+
+    .menu-trigger {
+        width: 45px;
+        height: 45px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: transform 0.4s ease;
     }
 }
 
