@@ -108,6 +108,13 @@
             </div>
             
         </div>
+
+        <div id="context-menu" class="context-menu hidden">
+            <button onclick="handleContextAction('marriage')"><i class="fas fa-ring"></i> Casar</button>
+            <button onclick="handleContextAction('child')"><i class="fas fa-sitemap"></i> Filho</button>
+            <button onclick="handleContextAction('genetics')"><i class="fas fa-microscope"></i> Editar</button>
+            <button onclick="handleContextAction('delete')" class="btn-danger-text"><i class="fas fa-trash"></i> Excluir</button>
+        </div>
         
         <div id="confirm-modal" class="hidden modal-overlay">
             <div class="glass-panel" style="position: relative; right: 0; top: 0; transform: none; animation: popInCenter 0.3s; width: 350px;">

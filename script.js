@@ -26,6 +26,10 @@ let dragOffsetY = 0;
 let tempAutoTraits = [];
 let tempSexChromosomes = [];
 
+let longPressTimer;
+const contextMenu = document.getElementById('context-menu');
+let contextNodeId = null; // Guarda em qual nó o menu foi aberto
+
 // --- Tema e UI ---
 function toggleTheme() {
     const body = document.body;
@@ -347,23 +351,75 @@ function handleWorkspaceClick(e) {
 
 function startDrag(e) {
     if (currentMode !== 'idle') return;
-    isDragging = true; 
-    dragTarget = e.currentTarget; // currentTarget garante que pegamos a div inteira do nó
     
+    isDragging = true;
+    dragTarget = e.currentTarget;
     const pos = getClientPos(e);
     const rect = dragTarget.getBoundingClientRect();
-    dragOffsetX = pos.x - rect.left; 
+    dragOffsetX = pos.x - rect.left;
     dragOffsetY = pos.y - rect.top;
-    
-    selectNode(dragTarget.id); 
-    closeGenetics(); 
-    
-    if(e.type === 'touchstart') e.preventDefault(); // Evita scroll da tela ao arrastar
+
+    selectNode(dragTarget.id);
+    hideContextMenu(); // Esconde o menu se clicar em outro lugar
+
+    // --- LÓGICA DO TOQUE LONGO ---
+    // Se segurar por 600ms, abre o menu
+    longPressTimer = setTimeout(() => {
+        if (isDragging) {
+            showContextMenu(pos.x, pos.y, dragTarget.id);
+            isDragging = false; // Cancela o arrasto para não mover enquanto usa o menu
+        }
+    }, 600);
+
+    if(e.type === 'touchstart') e.preventDefault();
 }
 
 // Eventos de movimento (Mouse e Touch)
 document.addEventListener('mousemove', handleMove);
 document.addEventListener('touchmove', handleMove, {passive: false});
+
+document.addEventListener('mousemove', () => clearTimeout(longPressTimer));
+document.addEventListener('touchmove', () => clearTimeout(longPressTimer));
+document.addEventListener('mouseup', () => clearTimeout(longPressTimer));
+document.addEventListener('touchend', () => clearTimeout(longPressTimer));
+
+// 3. Funções de controle do menu
+function showContextMenu(x, y, id) {
+    contextNodeId = id;
+    contextMenu.style.left = x + 'px';
+    contextMenu.style.top = (y - 50) + 'px'; // Aparece um pouco acima do dedo
+    contextMenu.classList.remove('hidden');
+    
+    // Feedback vibratório (opcional, funciona em Android)
+    if (navigator.vibrate) navigator.vibrate(50);
+}
+
+function hideContextMenu() {
+    contextMenu.classList.add('hidden');
+}
+
+// 4. Lida com as ações escolhidas no menu
+function handleContextAction(action) {
+    hideContextMenu();
+    const id = contextNodeId;
+
+    if (action === 'genetics') {
+        targetNodeId = id;
+        showGeneticsPopup(id);
+    } else if (action === 'delete') {
+        selectedNodeId = id;
+        deleteSelected();
+    } else if (action === 'marriage') {
+        setMode('marriage');
+        handleNodeClick({ stopPropagation: () => {} }, id); // Inicia o casamento com este nó
+    } else if (action === 'child') {
+        setMode('child');
+        handleNodeClick({ stopPropagation: () => {} }, id); // Inicia a lógica de filho com este nó
+    }
+}
+
+// Fechar menu ao clicar no fundo
+workspace.addEventListener('click', hideContextMenu);
 
 function handleMove(e) {
     if (!isDragging || !dragTarget) return;
