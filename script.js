@@ -597,3 +597,12 @@ workspace.addEventListener('click', () => {
     document.getElementById('top-drawer').classList.add('hidden');
     document.querySelector('.menu-trigger').style.transform = 'rotate(0deg)';
 });
+
+/*ISO DEVE FICAR NO FINAL*/
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('Service Worker registrado!', reg))
+            .catch(err => console.log('Erro ao registrar Service Worker', err));
+    });
+}
