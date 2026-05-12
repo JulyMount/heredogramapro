@@ -130,6 +130,12 @@ line { stroke: var(--text-main); stroke-width: 2.5; stroke-linecap: round; strok
 
 /* Pop-up Glassmorphism FIXO */
 .glass-panel { 
+    overflow-y: auto;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    padding: 20px; 
+    box-sizing: border-box;
     position: fixed; 
     top: 50%; 
     right: 20px; 
@@ -140,9 +146,8 @@ line { stroke: var(--text-main); stroke-width: 2.5; stroke-linecap: round; strok
     -webkit-backdrop-filter: blur(12px); 
     border: 1px solid var(--glass-border); 
     border-radius: 12px; 
-    padding: 20px; 
-    z-index: 100; 
     box-shadow: 0 10px 40px rgba(0,0,0,0.15); 
+    z-index: 100; 
     animation: slideInPanel 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
 }
 .hidden { display: none !important; }
@@ -150,6 +155,14 @@ line { stroke: var(--text-main); stroke-width: 2.5; stroke-linecap: round; strok
 @keyframes slideInPanel { 
     0% { opacity: 0; transform: translate(20px, -50%); } 
     100% { opacity: 1; transform: translate(0, -50%); } 
+}
+
+/* Se você tiver um container para os inputs/campos */
+.popup-content {
+    overflow-y: auto;
+    flex-grow: 1;
+    margin-bottom: 15px;
+    padding-right: 5px; /* Evita que o scroll tape os botões de remover */
 }
 
 .popup-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--grid-color); padding-bottom: 10px; }
