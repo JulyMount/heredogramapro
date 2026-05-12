@@ -231,6 +231,7 @@ textarea { resize: vertical; min-height: 50px; }
     /* 3. Ativa o novo Header Mobile */
     .mobile-header {
         display: flex !important;
+        z-index: 100 !important;
         justify-content: space-between; /* Empurra o logo pra esquerda e botões pra direita */
         align-items: center;
         padding: 0 10px 0 20px; /* Menos padding na direita para encostar o ícone */
@@ -241,7 +242,6 @@ textarea { resize: vertical; min-height: 50px; }
         top: 0;
         left: 0;
         width: 100%;
-        z-index: 1001;
     }
 
     .header-right {
@@ -260,6 +260,7 @@ textarea { resize: vertical; min-height: 50px; }
     /* 5. Ativa o FAB */
     .fab-container {
         display: block !important;
+        z-index: 5000 !important;
     }
 
     /* 6. Ajusta o indicador de modo (Modo Livre, etc) para não sumir */
@@ -322,7 +323,8 @@ textarea { resize: vertical; min-height: 50px; }
 }
 
 .context-menu {
-    position: absolute;
+    position: fixed !important; /* Fixed garante que ele use a tela toda como referência */
+    z-index: 99999 !important; /* O topo da hierarquia */
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border: 1px solid var(--border-color);
@@ -332,7 +334,6 @@ textarea { resize: vertical; min-height: 50px; }
     flex-direction: column;
     gap: 2px; /*Original sendo 5px*/
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    z-index: 1000;
     width: 150px; /*Original sendo 140px*/
 }
 
@@ -365,6 +366,7 @@ textarea { resize: vertical; min-height: 50px; }
     filter: blur(4px) brightness(0.8);
     pointer-events: none; /* Impede interações enquanto o menu está aberto */
     transition: filter 0.3s ease;
+    z-index: 500 !important;
 }
 
 /* FAB Container */
@@ -372,7 +374,7 @@ textarea { resize: vertical; min-height: 50px; }
     position: fixed;
     bottom: 30px;
     right: 30px;
-    z-index: 1000;
+    z-index: 5000 !important;
 }
 
 .fab-main {
