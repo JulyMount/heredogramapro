@@ -335,10 +335,29 @@ function getClientPos(e) {
 }
 
 function selectNode(id) {
-    Object.values(nodes).forEach(n => n.element.classList.remove('selected'));
-    selectedNodeId = id; if (id) document.getElementById(id).classList.add('selected');
-}
+    // 1. Limpa a seleção de TODOS os elementos no DOM de uma vez
+    document.querySelectorAll('.node').forEach(nodeEl => {
+        nodeEl.classList.remove('selected');
+    });
 
+    // 2. Atualiza a variável global
+    selectedNodeId = id;
+    
+    const fabIcon = document.getElementById('fab-icon');
+
+    if (id) {
+        // 3. Adiciona a classe apenas ao selecionado
+        const el = document.getElementById(id);
+        if (el) el.classList.add('selected');
+        
+        // 4. Muda o ícone do botão para edição
+        if (fabIcon) fabIcon.className = 'fas fa-microscope';
+    } else {
+        // 5. Se clicar no vazio, o ícone volta para o DNA
+        if (fabIcon) fabIcon.className = 'fas fa-dna';
+        if (typeof hideContextMenu === "function") hideContextMenu();
+    }
+}
 // Clicar fora para deselecionar (Mouse e Touch)
 workspace.addEventListener('mousedown', handleWorkspaceClick);
 workspace.addEventListener('touchstart', handleWorkspaceClick, {passive: false});
@@ -571,6 +590,22 @@ function toggleFAB() {
         workspace.classList.add('workspace-blur');
     } else {
         workspace.classList.remove('workspace-blur');
+    }
+}
+
+function handleFABClick() {
+    // Se houver um indivíduo selecionado
+    if (selectedNodeId) {
+        const fabBtn = document.getElementById('fab-main');
+        const rect = fabBtn.getBoundingClientRect();
+
+        // REDIRECIONA para a sua função que já existe e funciona
+        // Usamos a posição do botão para o menu aparecer ali perto
+        showContextMenu(rect.left - 120, rect.top - 200, selectedNodeId);
+        
+    } else {
+        // REDIRECIONA para o leque de criação que já existe
+        toggleFAB();
     }
 }
 
