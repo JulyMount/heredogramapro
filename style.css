@@ -205,12 +205,36 @@ textarea { resize: vertical; min-height: 50px; }
 .btn-save:hover { background: var(--primary-hover); }
 
 /* Toasts (Notificações Flutuantes) */
-#toast-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; pointer-events: none; }
-.toast { background: var(--text-main); color: var(--bg-color); padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: slideInRight 0.3s forwards; display: flex; align-items: center; gap: 10px; }
+#toast-container { position: fixed; bottom: 20px; left: 20px; right: auto; display: flex; flex-direction: column; gap: 10px; z-index: 9000 !important; pointer-events: none; }
+.toast {
+    pointer-events: auto; /* Garante que se houver um botão no aviso, ele funcione */
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    padding: 12px 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideInLeft 0.3s ease-out; /* Animação vindo da esquerda */
+}
 .toast.error { background: var(--danger); color: white; }
 .toast.success { background: var(--success); color: white; }
 .toast.fade-out { animation: fadeOutRight 0.3s forwards; }
-@keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
 @keyframes fadeOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
 
 /* Modal de Confirmação */
