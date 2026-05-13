@@ -109,15 +109,17 @@ function addNode(type) {
     if (type === 'male') initialSex = [{base: 'X', allele: ''}, {base: 'Y', allele: ''}];
     else if (type === 'female') initialSex = [{base: 'X', allele: ''}, {base: 'X', allele: ''}];
 
-    nodes[id] = { 
+    nodes[id] = {
         id, type, element: node, 
         name: '', showName: false,
         desc: '', showDesc: false,
         autosomal: [], 
         sexChromosomes: initialSex,
-        showSex: false 
+        showSex: false,
+        count: 1,        // Novo
+        isProband: false, // Novo
+        isAdopted: false // Novo
     };
-    
     renderLabelsOnNode(id);
     selectNode(id);
     if(currentMode !== 'genetics') setMode('idle');
@@ -195,6 +197,10 @@ function showGeneticsPopup(id) {
         document.getElementById('sex-cb').checked = node.showSex;
     }
 
+    document.getElementById('count-input').value = node.count || 1;
+    document.getElementById('proband-cb').checked = node.isProband || false;
+    document.getElementById('adopted-cb').checked = node.isAdopted || false;
+
     geneticsPopup.classList.remove('hidden');
 }
 
@@ -267,6 +273,10 @@ function saveGenetics() {
     node.desc = document.getElementById('desc-input').value.trim();
     node.showDesc = document.getElementById('desc-cb').checked;
 
+    node.count = parseInt(document.getElementById('count-input').value) || 1;
+    node.isProband = document.getElementById('proband-cb').checked;
+    node.isAdopted = document.getElementById('adopted-cb').checked;
+
     const newRows = autoTraitsContainer.querySelectorAll('.auto-trait-row[data-type]');
     newRows.forEach(row => {
         const t = row.dataset.type; const tid = row.dataset.tid;
@@ -295,18 +305,59 @@ function saveGenetics() {
 function renderLabelsOnNode(id) {
     const node = nodes[id];
     const el = node.element;
-    el.querySelectorAll('.label-container').forEach(e => e.remove());
 
+    // 1. Limpeza expandida para incluir os novos colchetes-div
+    el.querySelectorAll('.label-container, .node-number-overlay, .proband-indicator, .adopted-bracket').forEach(e => e.remove());
+    
+    // 2. Nova Lógica de ADOÇÃO com DIVs (para evitar giro herdado)
+    if (node.isAdopted) {
+        el.classList.add('is-adopted');
+        
+        const bLeft = document.createElement('div');
+        bLeft.className = 'adopted-bracket bracket-left';
+        bLeft.innerText = '[';
+        el.appendChild(bLeft);
+
+        const bRight = document.createElement('div');
+        bRight.className = 'adopted-bracket bracket-right';
+        bRight.innerText = ']';
+        el.appendChild(bRight);
+    } else {
+        el.classList.remove('is-adopted');
+    }
+    
+    // Remove apenas os labels e overlays, mantendo a estrutura do nó
+    el.querySelectorAll('.label-container, .node-number-overlay, .proband-indicator').forEach(e => e.remove());
+    
+    // Toggle classe de adoção
+    if (node.isAdopted) el.classList.add('is-adopted');
+    else el.classList.remove('is-adopted');
+
+    // Overlay de número
+    if (node.count > 1) {
+        const span = document.createElement('div');
+        span.className = 'node-number-overlay';
+        span.innerText = node.count;
+        el.appendChild(span);
+    }
+
+    // Seta do propondo
+    if (node.isProband) {
+        const arrow = document.createElement('div');
+        arrow.className = 'proband-indicator';
+        arrow.innerHTML = '▲'; 
+        el.appendChild(arrow);
+    }
+
+    // --- Sua lógica original de genética e nomes abaixo ---
     if (node.autosomal.length > 0) {
         const top = document.createElement('div'); top.className = 'label-container label-top';
         top.innerHTML = node.autosomal.map(t => t.replace(/\^([^\s]+)/g, "<sup>$1</sup>")).join(', ');
         el.appendChild(top);
     }
-
     if (node.type !== 'unknown' || node.name) {
         const bot = document.createElement('div'); bot.className = 'label-container label-bottom';
-        const hasAlleles = node.sexChromosomes.some(c => c.allele !== '');
-        if (node.sexChromosomes.length > 0 && (hasAlleles || node.showSex)) {
+        if (node.sexChromosomes.length > 0 && (node.sexChromosomes.some(c => c.allele !== '') || node.showSex)) {
             let sexHtml = node.sexChromosomes.map(c => `<span style="color:var(--primary);">${c.base}</span>${c.allele ? '<sup>'+c.allele+'</sup>' : ''}`).join('');
             bot.innerHTML += `<div style="margin-bottom:2px;">${sexHtml}</div>`;
         }
@@ -316,7 +367,6 @@ function renderLabelsOnNode(id) {
         }
         el.appendChild(bot);
     }
-
     if (node.desc) {
         const r = document.createElement('div');
         r.className = node.showDesc ? "label-container label-right" : "label-container label-right hover-only";

@@ -117,8 +117,19 @@
                 <div class="form-group">
                     <label>Descrição (Sintomas, etc):</label>
                     <textarea id="desc-input" placeholder="Ex: Hipertensão..."></textarea>
-                    <label class="cb-label"><input type="checkbox" id="desc-cb"> Visível ao lado</label>
-                </div>
+                    <label class="cb-label"><input type="checkbox" id="desc-cb"> Visível ao lado</label></div>
+                    
+                    <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--glass-border);">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <label style="font-size: 13px; color: var(--text-muted);">Qtde Indivíduos:</label>
+                            <input type="number" id="count-input" min="1" value="1" style="width: 45px; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); color: white; border-radius: 4px; padding: 2px;">
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <label class="cb-label"><input type="checkbox" id="proband-cb"> Paciente Índice (Seta)</label>
+                            <label class="cb-label"><input type="checkbox" id="adopted-cb"> Adotado [ ]</label>
+                        </div>
+                    </div>
 
                 <h4><i class="fas fa-dna"></i> Autossômica (Cima)</h4>
                 <div class="form-group">

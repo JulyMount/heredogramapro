@@ -468,3 +468,80 @@ textarea { resize: vertical; min-height: 50px; }
 .fab-container.active .fab-item:nth-child(1) { transform: translate(-70px, 0); }    /* Homem */
 .fab-container.active .fab-item:nth-child(2) { transform: translate(-50px, -50px); } /* Mulher */
 .fab-container.active .fab-item:nth-child(3) { transform: translate(0, -70px); }    /* N.I. */
+
+/* --- ESTILOS DE SOBREPOSIÇÃO DO NÓ --- */
+
+.node-number-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+    font-size: 14px;
+    pointer-events: none;
+    color: var(--text-main);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Base dos Colchetes (Divs) */
+.adopted-bracket {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 45px;
+    font-weight: 200;
+    pointer-events: none;
+    color: var(--text-main);
+    z-index: 1;
+}
+
+.bracket-left { left: -16px; }
+.bracket-right { right: -16px; }
+
+/* Seta do Propondo */
+.proband-indicator {
+    position: absolute;
+    bottom: -20px;
+    left: -20px;
+    font-size: 20px;
+    transform: rotate(45deg);
+    pointer-events: none;
+    color: var(--text-main);
+}
+
+/* --- O "PULO DO GATO" PARA O LOSANGO (UNKNOWN) --- */
+
+/* 1. O número precisa girar -45deg para anular os 45deg do pai */
+.node.unknown .node-number-overlay {
+    transform: translate(-50%, -50%) rotate(-45deg) !important;
+}
+
+/* 2. Os colchetes também anulam o giro e aumentam de tamanho */
+/* O losango por ser inclinado, tem uma altura visual maior que o quadrado */
+.node.unknown .adopted-bracket {
+    transform: translateY(-50%) rotate(-45deg) !important; /* translateY(-50%) e rotete(-45deg) */
+    font-size: 54px !important; /*Valor original é 54px*/
+}
+
+/* 3. Ajuste de Largura (Pitágoras na prática) */
+/* Em um quadrado de 40px girado, a distância entre as pontas é ~56px.
+   Por isso o colchete precisa de um 'left' e 'right' bem mais agressivo. */
+.node.unknown .bracket-left { 
+    left: -46px !important; /*left: -26px !important*/
+    bottom: 16px !important;
+}
+
+.node.unknown .bracket-right { 
+    right: -16px !important;  /*left: -26px !important*/
+    top: -11px !important;
+}
+
+/* 4. Seta do Propondo no Losango */
+.node.unknown .proband-indicator {
+    transform: rotate(0deg) !important;
+    bottom: -40px !important; /*bottom: -28px !important;*/
+    left: 18px !important; /*left: -24px !important;*/
+}
